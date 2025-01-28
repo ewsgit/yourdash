@@ -33,19 +33,19 @@ declare module "zod" {
 class RequestManager {
   private instance: Instance;
   app: FastifyInstance;
-  publicRoutes: RegExp[];
 
   constructor(instance: Instance) {
     this.instance = instance;
-    this.publicRoutes = [];
 
     this.app = Fastify({
       logger: {
         msgPrefix: "YourDash Backend -> ",
         enabled: false,
       },
-    })
-      .addHttpMethod("propfind", { hasBody: true }).addHttpMethod("proppatch", { hasBody: true }).addHttpMethod("propput", { hasBody: true }).withTypeProvider<ZodTypeProvider>()
+    }).withTypeProvider<ZodTypeProvider>()
+
+    this.app.addHttpMethod("PROPFIND", { hasBody: true })
+    this.app.addHttpMethod("PROPPATCH", { hasBody: true })
 
     return this;
   }
@@ -2079,8 +2079,7 @@ class RequestManager {
 
     const self = this;
     this.app.after(() => {
-      this.publicRoutes.push(/(\/)$/);
-      this.app.get("/", async function handler(req, res) {
+      this.app.get("/", { config: { isPublic: true } }, async function handler(req, res) {
         if (self.instance.flags.isDevmode) {
           return res.redirect(`http://localhost:5173/login/http://localhost:3563`);
         }
@@ -2088,10 +2087,10 @@ class RequestManager {
         return res.redirect(`https://yourdash.ewsgit.uk/login/${/* this.globalDb.get("core:this.instanceurl") */ "FIXME: implement this"}`);
       });
 
-      this.publicRoutes.push(/(\/test)$/);
       this.app.get(
         "/test",
         {
+          config: { isPublic: true },
           schema: {
             response: {
               200: z.object({
@@ -2111,26 +2110,22 @@ class RequestManager {
         },
       );
 
-      this.publicRoutes.push(/(\/418)$/);
-      this.app.get("/418", { schema: { response: { 200: z.string() } } }, async () => {
+      this.app.get("/418", { schema: { response: { 200: z.string() } }, config: { isPublic: true } }, async () => {
         return "This is a yourdash instance, not a coffee pot. This server does not implement the Hyper Text Coffee Pot Control Protocol";
       });
 
-      this.publicRoutes.push(/(\/ping)$/);
-      this.app.get("/ping", { schema: { response: { 200: z.string() } } }, async () => {
+      this.app.get("/ping", { schema: { response: { 200: z.string() } }, config: { isPublic: true } }, async () => {
         return "pong";
       });
 
-      this.publicRoutes.push(/(\/core\/test\/self-ping)$/);
-      this.app.get("/core/test/self-ping", { schema: { response: { 200: z.object({ success: z.boolean() }) } } }, async () => {
+      this.app.get("/core/test/self-ping", { schema: { response: { 200: z.object({ success: z.boolean() }) } }, config: { isPublic: true } }, async () => {
         return { success: true };
       });
     });
 
-    this.publicRoutes.push(/(\/login\/instance\/metadata)$/);
     this.app.get(
       "/login/instance/metadata",
-      { schema: { response: { 200: z.object({ title: z.string(), message: z.string(), loginLayout: z.nativeEnum(LoginLayout) }) } } },
+      { schema: { response: { 200: z.object({ title: z.string(), message: z.string(), loginLayout: z.nativeEnum(LoginLayout) }) } }, config: { isPublic: true } },
       () => {
         return {
           title: "YourDash Instance",
@@ -2140,13 +2135,12 @@ class RequestManager {
       },
     );
 
-    this.publicRoutes.push(/(\/login\/user\/)[a-zA-z]*/);
     this.app.get(
       "/login/user/:username",
       {
         schema: {
           response: { 200: z.object({ name: z.object({ first: z.string(), last: z.string() }) }), 404: z.object({ error: z.string() }) },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         const user = new User((req.params as unknown as { username: string }).username);
@@ -2165,8 +2159,7 @@ class RequestManager {
       },
     );
 
-    this.publicRoutes.push(/(\/login\/user\/)[a-zA-Z](\/avatar)$/);
-    this.app.get("/login/user/:username/avatar", async (req, res) => {
+    this.app.get("/login/user/:username/avatar", { config: { isPublic: true } }, async (req, res) => {
       const user = new User((req.params as unknown as { username: string }).username);
       if (await user.doesExist()) {
         res.status(200);
@@ -2180,10 +2173,9 @@ class RequestManager {
       }
     });
 
-    this.publicRoutes.push(/(\/login\/user\/authenticate)$/);
     this.app.post(
       "/login/user/authenticate",
-      { schema: { body: z.object({ username: z.string(), password: z.string() }) } },
+      { schema: { body: z.object({ username: z.string(), password: z.string() }) }, config: { isPublic: true } },
       async (req, res) => {
         const body = req.body as { username: string; password: string };
         const user = new User(body.username);
@@ -2214,8 +2206,7 @@ class RequestManager {
       },
     );
 
-    this.publicRoutes.push(/(\/login\/instance\/background)$/);
-    this.app.get("/login/instance/background", async (req, res) => {
+    this.app.get("/login/instance/background", { config: { isPublic: true } }, async (req, res) => {
       res.status(200);
       return this.instance.requestManager.sendFile(
         res,
@@ -2237,8 +2228,7 @@ class RequestManager {
       },
     );
 
-    this.publicRoutes.push(/(\/login\/is-authenticated)$/);
-    this.app.get("/login/is-authenticated", async (req, res) => {
+    this.app.get("/login/is-authenticated", { config: { isPublic: true } }, async (req, res) => {
       const authorization = req.cookies[ "authorization" ];
 
       if (!authorization) return res.status(401).send();
@@ -2278,7 +2268,7 @@ class RequestManager {
               })
               .array(),
           },
-        },
+        }
       },
       async (req, res) => {
         const applications = this.instance.applications.loadedApplications;

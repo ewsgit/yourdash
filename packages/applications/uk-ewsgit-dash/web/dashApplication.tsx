@@ -25,7 +25,7 @@ const DashApplication: React.FC = () => {
   const dashboard = useResource(
     () =>
       tun.get(
-        `/app/uk-ewsgit-dash/dashboard`,
+        `/uk-ewsgit-dash/dashboard`,
         "json",
         z.object({
           header: z.object({

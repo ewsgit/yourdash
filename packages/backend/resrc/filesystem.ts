@@ -17,6 +17,8 @@ class Filesystem {
     usersDirectory: () => `${this.FS_ROOT}/Users/`,
     globalCacheDirectory: () => `${this.FS_ROOT}/Cache/`,
     teamsDirectory: () => `${this.FS_ROOT}/Teams/`,
+    applicationsDirectory: () => `${this.FS_ROOT}/../packages/applications/`,
+    applicationDirectory: (applicationId: string) => `${this.FS_ROOT}/../packages/applications/${applicationId}/`,
     homeDirectory: (username: string) => `${this.FS_ROOT}/Users/${username}/`,
     userDocumentsDirectory: (username: string) => `${this.FS_ROOT}/Users/${username}/Documents/`,
     userDownloadsDirectory: (username: string) => `${this.FS_ROOT}/Users/${username}/Downloads/`,

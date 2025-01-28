@@ -23,10 +23,8 @@ class Authorization {
   async __internal_authHook(app: FastifyInstance) {
     app.addHook("onRequest", async (req, res) => {
       try {
-        for (const route of this.instance.requestManager.publicRoutes) {
-          if (req.originalUrl.match(route)) {
-            return;
-          }
+        if ((res.routeOptions.config as { isPublic?: boolean })?.isPublic) {
+          return
         }
 
         const authorization = req.cookies["authorization"];

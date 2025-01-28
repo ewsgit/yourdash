@@ -1,18 +1,37 @@
+import { YourDashApplication } from '@yourdash/backend/resrc/applications.js';
+import instance from '@yourdash/backend/resrc/main.js';
 /*
  * Copyright ©2025 Ewsgit<https://github.com/ewsgit> and YourDash<https://github.com/yourdash> contributors.
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
-import BackendModule, { YourDashModuleArguments } from "@yourdash/backend/src/core/moduleManager/backendModule.js";
+export default class Application extends YourDashApplication {
+  constructor() {
+    super({
+      version: {
+        major: 1,
+        minor: 0,
+      },
+      configVersion: 1,
+      credits: {
+        authors: [ { name: "Ewsgit", site: "https://ewsgit.uk" } ],
+      },
+      frontend: {
+        entryPoint: "../web/index.tsx",
+      },
+      displayName: "Endpoints",
+      description: "The YourDash Endpoints devtool.",
+      id: "uk-ewsgit-endpoints",
+    });
 
-export default class EndpointsModule extends BackendModule {
-  constructor(args: YourDashModuleArguments) {
-    super(args);
+    return this;
   }
 
-  public loadEndpoints() {
-    super.loadEndpoints();
+  onLoad(): this {
+    instance.request.get("/uk-ewsgit-endpoints/endpoints", async (req, res) => {
+      return instance.requestManager.app.printRoutes()
+    })
 
-    this.api.request.get("/app/endpoints/endpoints", async (req, res) => res.json(this.api.request.rawExpress._router.stack));
+    return this;
   }
 }

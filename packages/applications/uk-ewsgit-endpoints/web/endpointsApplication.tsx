@@ -8,22 +8,22 @@ import Button from "@yourdash/chiplet/components/button/Button";
 import Card from "@yourdash/chiplet/components/card/Card";
 import DropdownButton from "@yourdash/chiplet/components/dropdownButton/DropdownButton";
 import Icon from "@yourdash/chiplet/components/icon/Icon";
-import { UKIcon } from "packages/uikit/src/core/iconDictionary.ts";
 import TextBox from "@yourdash/chiplet/components/textBox/TextBox";
 import React, { useState, useEffect } from "react";
 import coreCSI from "@yourdash/csi/coreCSI";
+import tun from "@yourdash/tunnel/src/index.js"
+import { z } from "zod";
+import { UKIcons } from "@yourdash/uikit/src/core/iconDictionary.js";
 
-function loadPossibleEndpoints(setEndpoints: (data: string[]) => void) {
-  coreCSI.syncGetJson("/app/endpoints/endpoints", (data: any) => {
+async function loadPossibleEndpoints(setEndpoints: (data: string[]) => void) {
+  const { data } = await tun.get("/app/endpoints/endpoints", "json", z.string().array())
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const endpoints: string[] = data.map((endpoint: any) => endpoint?.route?.path || null).filter((endpoint: any) => endpoint !== null); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    setEndpoints([...new Set(endpoints)]);
-  });
+  setEndpoints([ ...new Set(endpoints) ]);
 }
 
 const EndpointsApplication: React.FC = () => {
-  const trans = useTranslate("endpoints");
   const [requestType, setRequestType] = useState<"Text" | "JSON">("JSON");
   const [requestMethod, setRequestMethod] = useState<"GET" | "POST" | "DELETE">("GET");
   const [requestHeaders, setRequestHeaders] = useState<{ [key: string]: string }>({});
@@ -95,7 +95,7 @@ const EndpointsApplication: React.FC = () => {
               preserveColor
               icon={UKIcons.YourDashLogo}
             />
-            <h2 className={"text-3xl font-semibold tracking-wide"}>{trans("APPLICATION_NAME")}</h2>
+            <h2 className={"text-3xl font-semibold tracking-wide"}>{"APPLICATION_NAME"}</h2>
           </div>
         </section>
         <section className={"flex items-center justify-center h-full gap-2"}>
@@ -108,35 +108,35 @@ const EndpointsApplication: React.FC = () => {
                 case "GET":
                   switch (requestType) {
                     case "Text":
-                      coreCSI.getText(
-                        selectedEndpoint,
-                        (data: any) => {
-                          setResponse(data);
-                          setLoading(false);
-                        },
-                        (error: any) => {
-                          setDidError(error);
-                          setLoading(false);
-                        },
-                        requestHeaders,
-                      );
+                      // coreCSI.getText(
+                      //   selectedEndpoint,
+                      //   (data: any) => {
+                      //     setResponse(data);
+                      //     setLoading(false);
+                      //   },
+                      //   (error: any) => {
+                      //     setDidError(error);
+                      //     setLoading(false);
+                      //   },
+                      //   requestHeaders,
+                      // );
                       break;
                     case "JSON":
-                      coreCSI.syncGetJson(
-                        selectedEndpoint,
-                        (data: any) => {
-                          setResponse(data);
-                          setLoading(false);
-                        },
-                        (error) => {
-                          setDidError(error);
-                          setLoading(false);
-                        },
-                        requestHeaders,
-                      );
+                      // coreCSI.syncGetJson(
+                      //   selectedEndpoint,
+                      //   (data: any) => {
+                      //     setResponse(data);
+                      //     setLoading(false);
+                      //   },
+                      //   (error) => {
+                      //     setDidError(error);
+                      //     setLoading(false);
+                      //   },
+                      //   requestHeaders,
+                      // );
                       break;
                     default:
-                      setDidError(trans("INTERNAL_ERROR"));
+                      setDidError("INTERNAL_ERROR");
                   }
                   break;
                 case "POST":
@@ -157,22 +157,22 @@ const EndpointsApplication: React.FC = () => {
                       );
                       break;
                     case "JSON":
-                      coreCSI.postJson(
-                        selectedEndpoint,
-                        JSON.parse(requestBody),
-                        (data: any) => {
-                          setResponse(data);
-                          setLoading(false);
-                        },
-                        (error: any) => {
-                          setDidError(error);
-                          setLoading(false);
-                        },
-                        requestHeaders,
-                      );
+                      // coreCSI.postJson(
+                      //   selectedEndpoint,
+                      //   JSON.parse(requestBody),
+                      //   (data: any) => {
+                      //     setResponse(data);
+                      //     setLoading(false);
+                      //   },
+                      //   (error: any) => {
+                      //     setDidError(error);
+                      //     setLoading(false);
+                      //   },
+                      //   requestHeaders,
+                      // );
                       break;
                     default:
-                      setDidError(trans("INTERNAL_ERROR"));
+                      setDidError("INTERNAL_ERROR");
                   }
                   break;
                 case "DELETE":
@@ -206,15 +206,15 @@ const EndpointsApplication: React.FC = () => {
                       );
                       break;
                     default:
-                      setDidError(trans("INTERNAL_ERROR"));
+                      setDidError("INTERNAL_ERROR");
                   }
                   break;
                 default:
-                  setDidError(trans("INTERNAL_ERROR"));
+                  setDidError("INTERNAL_ERROR");
               }
             }}
           >
-            {trans("SEND_REQUEST.LABEL")}
+            {"SEND_REQUEST.LABEL"}
           </Button>
         </section>
       </Card>

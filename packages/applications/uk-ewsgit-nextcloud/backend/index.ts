@@ -30,7 +30,7 @@ export default class Application extends YourDashApplication {
       },
       configVersion: 1,
       credits: {
-        authors: [{ name: "Ewsgit", site: "https://ewsgit.uk" }],
+        authors: [ { name: "Ewsgit", site: "https://ewsgit.uk" } ],
       },
       frontend: {
         entryPoint: "../web/index.tsx",
@@ -49,7 +49,6 @@ export default class Application extends YourDashApplication {
   }
 
   public onLoad(): this {
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/status.php)$/)
     instance.request.get(
       "/uk-ewsgit-nextcloud/status.php",
       {
@@ -66,14 +65,14 @@ export default class Application extends YourDashApplication {
               extendedSupport: z.boolean(),
             }),
           },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         res.header("Access-Control-Allow-Origin", "*");
 
         const query = (await instance.database.query("SELECT display_name FROM configuration ORDER BY config_version DESC LIMIT 1")).rows[ 0 ];
 
-        switch (req.headers["Content-Type"]) {
+        switch (req.headers[ "Content-Type" ]) {
           case "application/json":
           default:
             return {
@@ -90,7 +89,6 @@ export default class Application extends YourDashApplication {
       },
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/ocs\/v2.php\/cloud\/capabilities)$/)
     instance.request.get(
       "/uk-ewsgit-nextcloud/ocs/v2.php/cloud/capabilities",
       {
@@ -138,16 +136,16 @@ export default class Application extends YourDashApplication {
               }),
             }),
           },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         const query = (
           await instance.database.query(
             "SELECT display_name, external_url, description FROM configuration ORDER BY config_version DESC LIMIT 1",
           )
-        ).rows[0];
+        ).rows[ 0 ];
 
-        switch (req.headers["Content-Type"]) {
+        switch (req.headers[ "Content-Type" ]) {
           case "application/json":
           default:
             return {
@@ -195,7 +193,6 @@ export default class Application extends YourDashApplication {
       },
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/ocs\/v1.php\/cloud\/capabilities)$/)
     instance.request.get(
       "/uk-ewsgit-nextcloud/ocs/v1.php/cloud/capabilities",
       {
@@ -243,16 +240,16 @@ export default class Application extends YourDashApplication {
               }),
             }),
           },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         const query = (
           await instance.database.query(
             "SELECT display_name, external_url, description FROM configuration ORDER BY config_version DESC LIMIT 1",
           )
-        ).rows[0];
+        ).rows[ 0 ];
 
-        switch (req.headers["Content-Type"]) {
+        switch (req.headers[ "Content-Type" ]) {
           case "application/json":
           default:
             return {
@@ -310,10 +307,9 @@ export default class Application extends YourDashApplication {
 
     let authFlowSessions: { [ pollToken: string ]: { pollToken: string; sessionToken?: string; username: string } } = {};
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/index.php\/login\/v2)$/)
     instance.request.post(
       "/uk-ewsgit-nextcloud/index.php/login/v2",
-      { schema: { response: { 200: z.object({ poll: z.object({ token: z.string(), endpoint: z.string() }), login: z.string() }) } } },
+      { schema: { response: { 200: z.object({ poll: z.object({ token: z.string(), endpoint: z.string() }), login: z.string() }) } }, config: { isPublic: true } },
       async (req, res) => {
         const pollToken = generateUUID();
 
@@ -324,7 +320,7 @@ export default class Application extends YourDashApplication {
         return {
           poll: {
             token: pollToken,
-            endpoint: `http://${req.hostname}:3563/index.php/login/v2/poll`,
+            endpoint: `http://${req.hostname}:3563/uk-ewsgit-nextcloud/index.php/login/v2/poll`,
           },
           // TODO: replace localhost with the instance's web url
           login: `http://localhost:5173/app/a/uk-ewsgit-nextcloud/flow/v2/${pollToken}`,
@@ -332,14 +328,13 @@ export default class Application extends YourDashApplication {
       },
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/index.php\/login\/v2\/poll)$/)
     instance.request.post(
       "/uk-ewsgit-nextcloud/index.php/login/v2/poll",
       {
         schema: {
           response: { 200: z.object({ server: z.string(), loginName: z.string(), appPassword: z.string() }) },
           body: z.object({ token: z.string() }),
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         const authSessionPollToken = (req.body as { token: string }).token;
@@ -365,7 +360,6 @@ export default class Application extends YourDashApplication {
       },
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/login\/nextcloud\/flow\/v2\/authenticate)$/)
     instance.request.post(
       "/uk-ewsgit-nextcloud/login/nextcloud/flow/v2/authenticate",
       {
@@ -386,7 +380,7 @@ export default class Application extends YourDashApplication {
                 }),
               ),
           },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         if (!req.body) {
@@ -435,13 +429,13 @@ export default class Application extends YourDashApplication {
 
       // if we are using api v2 then the sessionToken is just the user's password
       function parseAuthorization(sessionToken: string): { username: string; sessionToken: string } {
-        const tokenString = sessionToken.split("Basic ")[1];
+        const tokenString = sessionToken.split("Basic ")[ 1 ];
         const tokenParsed = Buffer.from(tokenString, "base64").toString("utf-8");
 
         const parsedTokenValues = tokenParsed.split(":");
 
-        const username = parsedTokenValues[0];
-        const userPassword = parsedTokenValues[1];
+        const username = parsedTokenValues[ 0 ];
+        const userPassword = parsedTokenValues[ 1 ];
         return { username: username, sessionToken: userPassword };
       }
 
@@ -462,7 +456,6 @@ export default class Application extends YourDashApplication {
       return (dbQuery.rows[ 0 ].username);
     }
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/ocs\/v1.php\/cloud\/user)$/)
     instance.request.get(
       "/uk-ewsgit-nextcloud/ocs/v1.php/cloud/user",
       {
@@ -532,7 +525,7 @@ export default class Application extends YourDashApplication {
               }),
             }),
           },
-        },
+        }, config: { isPublic: true }
       },
       async (req, res) => {
         const user = getUserForRequest(req);
@@ -590,7 +583,7 @@ export default class Application extends YourDashApplication {
               biographyScope: "v2-local",
               profile_enabled: "1",
               profile_enabledScope: "v2-local",
-              groups: ["admin"],
+              groups: [ "admin" ],
               language: "en_GB",
               locale: "",
               notify_email: null,
@@ -604,8 +597,7 @@ export default class Application extends YourDashApplication {
       },
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/remote.php\/dav\/avatars\/)[a-zA-Z](\/)*$/)
-    instance.request.get("/uk-ewsgit-nextcloud/remote.php/dav/avatars/:username/*", { schema: { response: { 200: z.unknown() } } }, async (req, res) => {
+    instance.request.get("/uk-ewsgit-nextcloud/remote.php/dav/avatars/:username/*", { schema: { response: { 200: z.unknown() } }, config: { isPublic: true } }, async (req, res) => {
       const user = new User((req.params as unknown as { username: string }).username);
       if (await user.doesExist()) {
         res.status(200);
@@ -635,12 +627,12 @@ export default class Application extends YourDashApplication {
       </d:error>`);
   }); */
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/remote.php\/dav\/files\/)[a-zA-Z](\/)*$/)
     instance.request.route(
       {
         url: "/uk-ewsgit-nextcloud/remote.php/dav/files/:username/*",
         method: "PROPFIND",
         schema: { response: { 200: z.object({ error: z.boolean() }) } },
+        config: { isPublic: true },
         handler:
           async (req, res) => {
             const params = req.params as { username: string; "*": string };
@@ -719,10 +711,9 @@ ${response.map((res) => {
       }
     );
 
-    instance.requestManager.publicRoutes.push(/(\/uk-ewsgit-nextcloud\/remote.php\/dav\/avatars\/)[a-zA-Z](\/)[0-9](.png)$/)
     instance.request.get(
       "/uk-ewsgit-nextcloud/remote.php/dav/avatars/:username/:size.png",
-      { schema: { response: { 200: z.unknown() } } },
+      { schema: { response: { 200: z.unknown() } }, config: { isPublic: true } },
       async (req, res) => {
         const user = new User((req.params as unknown as { username: string }).username);
         if (await user.doesExist()) {

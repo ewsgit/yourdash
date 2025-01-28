@@ -59,7 +59,6 @@
     "image-size": "^1.1.1",
     "kill-port": "^2.0.1",
     "libvips": "^0.0.2",
-    "libxmljs2": "^0.35.0",
     "loadavg-windows": "^1.1.1",
     "minimist": "^1.2.8",
     "node-addon-api": "^7.1.0",
@@ -90,7 +89,6 @@
     "dev": "bun --watch resrc/main.ts --dev --color=full --log-requests",
     "legacy-dev": "bun src/main.ts --dev --color=full --log-requests",
     "legacy-dev-debug": "bun --inspect-brk src/main.ts --dev --color=full --log-requests",
-    "production": "bun src/main.ts --color=full --log-requests",
-    "postinstall": "bun add bcrypt sharp"
+    "production": "bun src/main.ts --color=full --log-requests"
   }
 }
