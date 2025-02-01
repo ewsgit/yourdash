@@ -2,7 +2,8 @@
 
 The homepage for YourDash
 
-Choose which layout you want to use, Dash supports 2 layouts: 'Browser' and 'Dashboard'
+## Features
+- Choose which layout you want to use, Dash supports 2 layouts: 'Browser' and 'Dashboard'
 
 ## Credits
 

@@ -3,8 +3,8 @@
  * YourDash is licensed under the MIT License. (https://mit.ewsgit.uk)
  */
 
-import coreCSI from "./coreCSI";
+import tun from "./index.js";
 
 export default function toAuthImgUrl(authenticatedImageSrc: string) {
-  return coreCSI.getInstanceUrl() + authenticatedImageSrc;
+  return tun.baseUrl + authenticatedImageSrc;
 }

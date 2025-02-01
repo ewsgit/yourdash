@@ -42,10 +42,10 @@ class RequestManager {
         msgPrefix: "YourDash Backend -> ",
         enabled: false,
       },
-    }).withTypeProvider<ZodTypeProvider>()
+    }).withTypeProvider<ZodTypeProvider>();
 
-    this.app.addHttpMethod("PROPFIND", { hasBody: true })
-    this.app.addHttpMethod("PROPPATCH", { hasBody: true })
+    this.app.addHttpMethod("PROPFIND", { hasBody: true });
+    this.app.addHttpMethod("PROPPATCH", { hasBody: true });
 
     return this;
   }
@@ -1909,7 +1909,7 @@ class RequestManager {
     this.app.register(fastifyRequestContext);
 
     this.app.addHook("onResponse", async (req, res) => {
-      if (res.statusCode.toString()[ 0 ] === "4") {
+      if (res.statusCode.toString()[0] === "4") {
         switch (req.method.toUpperCase()) {
           case "GET":
             if (req.url.startsWith("/core/auth-img")) {
@@ -1959,7 +1959,7 @@ class RequestManager {
           default:
         }
       }
-      if (res.statusCode.toString()[ 0 ] === "5") {
+      if (res.statusCode.toString()[0] === "5") {
         switch (req.method.toUpperCase()) {
           case "GET":
             if (req.url.startsWith("/core/auth-img")) {
@@ -2014,10 +2014,10 @@ class RequestManager {
     this.app.addHook("onRequest", async (req, res) => {
       let queryResult = await this.instance.database.query(
         "INSERT INTO public.request_manager_log (request_timestamp, request_method, request_path, request_body) VALUES ($1, $2, $3, $4) RETURNING request_id;",
-        [ Date.now(), req.method, req.url, req.body ],
+        [Date.now(), req.method, req.url, req.body],
       );
 
-      res.header("request-id", JSON.stringify(queryResult.rows[ 0 ].request_id));
+      res.header("request-id", JSON.stringify(queryResult.rows[0].request_id));
 
       switch (req.method.toUpperCase()) {
         case "GET":
@@ -2118,14 +2118,21 @@ class RequestManager {
         return "pong";
       });
 
-      this.app.get("/core/test/self-ping", { schema: { response: { 200: z.object({ success: z.boolean() }) } }, config: { isPublic: true } }, async () => {
-        return { success: true };
-      });
+      this.app.get(
+        "/core/test/self-ping",
+        { schema: { response: { 200: z.object({ success: z.boolean() }) } }, config: { isPublic: true } },
+        async () => {
+          return { success: true };
+        },
+      );
     });
 
     this.app.get(
       "/login/instance/metadata",
-      { schema: { response: { 200: z.object({ title: z.string(), message: z.string(), loginLayout: z.nativeEnum(LoginLayout) }) } }, config: { isPublic: true } },
+      {
+        schema: { response: { 200: z.object({ title: z.string(), message: z.string(), loginLayout: z.nativeEnum(LoginLayout) }) } },
+        config: { isPublic: true },
+      },
       () => {
         return {
           title: "YourDash Instance",
@@ -2140,7 +2147,8 @@ class RequestManager {
       {
         schema: {
           response: { 200: z.object({ name: z.object({ first: z.string(), last: z.string() }) }), 404: z.object({ error: z.string() }) },
-        }, config: { isPublic: true }
+        },
+        config: { isPublic: true },
       },
       async (req, res) => {
         const user = new User((req.params as unknown as { username: string }).username);
@@ -2206,6 +2214,14 @@ class RequestManager {
       },
     );
 
+    this.app.post("/login/user/logout", { schema: { response: { 200: z.object({ success: z.boolean() }) } } }, async (req, res) => {
+      res.clearCookie("authorization");
+
+      res.status(200);
+
+      return { success: true };
+    });
+
     this.app.get("/login/instance/background", { config: { isPublic: true } }, async (req, res) => {
       res.status(200);
       return this.instance.requestManager.sendFile(
@@ -2229,11 +2245,11 @@ class RequestManager {
     );
 
     this.app.get("/login/is-authenticated", { config: { isPublic: true } }, async (req, res) => {
-      const authorization = req.cookies[ "authorization" ];
+      const authorization = req.cookies["authorization"];
 
       if (!authorization) return res.status(401).send();
 
-      const [ username, sessionToken ] = authorization.split(" ");
+      const [username, sessionToken] = authorization.split(" ");
 
       if (!(await this.instance.authorization.authorizeUser(username, `${username} ${sessionToken}`))) return res.status(401).send();
 
@@ -2268,7 +2284,7 @@ class RequestManager {
               })
               .array(),
           },
-        }
+        },
       },
       async (req, res) => {
         const applications = this.instance.applications.loadedApplications;
@@ -2319,14 +2335,10 @@ class RequestManager {
         recursive: true,
       });
 
-      if (!await this.instance.filesystem.doesPathExist(path.join(app?.__internal_initializedPath, "./icon.avif"))) {
+      if (!(await this.instance.filesystem.doesPathExist(path.join(app?.__internal_initializedPath, "./icon.avif")))) {
         return this.sendFile(
           res,
-          path.join(
-            this.instance.filesystem.commonPaths.globalCacheDirectory(),
-            "panel",
-            "invalidIcon.webp"
-          ),
+          path.join(this.instance.filesystem.commonPaths.globalCacheDirectory(), "panel", "invalidIcon.webp"),
           "image/webp",
         );
       }
@@ -2437,7 +2449,7 @@ class RequestManager {
           username,
         ]);
 
-        const pinnedApplications: YourDashApplication[] = query.rows[ 0 ].pinned_applications.map((a: string) =>
+        const pinnedApplications: YourDashApplication[] = query.rows[0].pinned_applications.map((a: string) =>
           this.instance.applications.loadedApplications.find((i) => i.__internal_params.id === a),
         );
 
@@ -2540,12 +2552,12 @@ class RequestManager {
           try {
             const previousPins = await this.instance.database.query(
               "SELECT pinned_applications FROM panel_configuration WHERE username = $1;",
-              [ username ],
+              [username],
             );
 
-            if (previousPins.rows[ 0 ].pinned_applications.includes(applicationId)) return { success: false };
+            if (previousPins.rows[0].pinned_applications.includes(applicationId)) return { success: false };
 
-            const newPins = [ ...previousPins.rows[ 0 ].pinned_applications, applicationId ];
+            const newPins = [...previousPins.rows[0].pinned_applications, applicationId];
 
             await this.instance.database.query("UPDATE panel_configuration SET pinned_applications = $2 WHERE username = $1;", [
               username,
@@ -2556,6 +2568,27 @@ class RequestManager {
             return { success: false };
           }
         }
+      },
+    );
+
+    this.app.get(
+      "/core/panel",
+      {
+        schema: {
+          response: {
+            200: z.object({
+              widgets: z.string().array(),
+              size: z.enum(["small", "medium", "large"]),
+            }),
+          },
+        },
+      },
+      async (req, res) => {
+        const username = this.getRequestUsername();
+
+        const dbquery = await this.instance.database.query("SELECT widgets, size FROM panel_configuration WHERE username = $1;", [
+          username,
+        ]);
       },
     );
   }

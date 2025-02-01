@@ -34,7 +34,7 @@ class Instance {
   };
   log!: Log;
   requestManager!: RequestManager;
-  request!: RequestManager[ "app" ];
+  request!: RequestManager["app"];
   authorization!: Authorization;
   database!: pg.Client;
   filesystem!: Filesystem;
@@ -43,13 +43,13 @@ class Instance {
   private status: INSTANCE_STATUS = INSTANCE_STATUS.UNKNOWN;
 
   constructor() {
-    this.__internal__init().then(() => {
+    this.__internal_init().then(() => {
       return 0;
     });
     return this;
   }
 
-  async __internal__init() {
+  async __internal_init() {
     // FLAGS FOR DEVELOPMENT FEATURES
     this.flags = {
       isDebugmode: process.env.IS_DEBUGMODE === "true" || false,
@@ -75,7 +75,7 @@ class Instance {
       // create the yourdash database if it doesn't already exist
       try {
         await tempDatabaseClient.query("CREATE DATABASE yourdash");
-      } catch (e) { }
+      } catch (e) {}
     } catch (e) {
       console.error(
         "database",
@@ -146,13 +146,13 @@ class Instance {
     }
 
     try {
-      const doesConfigurationExist = (await this.database.query(`SELECT EXISTS (
+      const doesConfigurationExist = await this.database.query(`SELECT EXISTS (
     SELECT FROM
         pg_tables
     WHERE
         schemaname = 'public' AND
         tablename  = 'configuration'
-    );`))
+    );`);
 
       if (!doesConfigurationExist) {
         await this.database.query(`CREATE TABLE IF NOT EXISTS configuration
@@ -169,7 +169,7 @@ class Instance {
                                   )`);
         this.log.info("database", `Table ${this.log.addEmphasisToString("config")} has been created as it did not already exist.`);
 
-        await this.database.query("INSERT INTO configuration(creation_date) VALUES ($1);", [ Date.now() ]);
+        await this.database.query("INSERT INTO configuration(creation_date) VALUES ($1);", [Date.now()]);
       }
     } catch (e) {
       console.error(e);
@@ -209,11 +209,12 @@ class Instance {
     try {
       await this.database.query(`CREATE TABLE IF NOT EXISTS panel_configuration
                                   (
-                                    config_version              serial primary key,
-                                    username                    text   NOT NULL,
+                                    config_version              serial  primary key,
+                                    username                    text    NOT NULL,
                                     pinned_applications         text[]  DEFAULT '{ "uk-ewsgit-dash", "uk-ewsgit-files", "uk-ewsgit-store", "uk-ewsgit-weather" }',
-                                    side                  text DEFAULT 'left',
-                                    size                 text DEFAULT 'medium'
+                                    widgets                     text[]  DEFAULT '{ "InstanceLogo", "ApplicationLauncher", "Separator", "QuickShortcuts", "LocalhostIndicator", "UserProfile" }',
+                                    side                        text    DEFAULT 'left',
+                                    size                        text    DEFAULT 'medium'
                                   )`);
       this.log.info(
         "database",
@@ -230,7 +231,7 @@ class Instance {
     this.log.info("startup", "Loading applications...");
 
     const applications = await this.applications.getInstalledApplications();
-    this.log.info("applications", `loading applications: '${applications}'`)
+    this.log.info("applications", `loading applications: '${applications}'`);
 
     for (const app of applications) {
       await this.applications.loadApplication(app);
@@ -273,7 +274,7 @@ import { Route, Routes } from "react-router";
       let loadableRegionReplacement = "";
       let routeRegionReplacement = "";
 
-      for (const [ index, application ] of this.applications.loadedApplications.entries()) {
+      for (const [index, application] of this.applications.loadedApplications.entries()) {
         if (!application.__internal_params.frontend) continue;
 
         loadableRegionReplacement += `const Application${index}=loadable(()=>import("@yourdash/applications/${path.posix.join(path.basename(application.__internal_initializedPath), "./web/index.tsx")}"));`;
@@ -301,7 +302,7 @@ import { Route, Routes } from "react-router";
     this.status = status;
     this.log.info(
       "instance",
-      `Instance status has been set to ${this.log.addEmphasisToString(`'INSTANCE_STATUS.${INSTANCE_STATUS[ status ]}'`)}`,
+      `Instance status has been set to ${this.log.addEmphasisToString(`'INSTANCE_STATUS.${INSTANCE_STATUS[status]}'`)}`,
     );
 
     return this;
@@ -310,7 +311,7 @@ import { Route, Routes } from "react-router";
   async __internal_generateInstanceLogos() {
     let instanceLogoPath = path.join(this.filesystem.commonPaths.systemDirectory(), "instanceLogo.png");
 
-    const requiredDimensions = [ 32, 40, 64, 128, 256, 512, 768, 1024 ];
+    const requiredDimensions = [32, 40, 64, 128, 256, 512, 768, 1024];
 
     for (const dimension of requiredDimensions) {
       if (

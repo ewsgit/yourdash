@@ -3,7 +3,6 @@
  * YourDash is licensed under the MIT License. (https://mit.ewsgit.uk)
  */
 
-import useResource from "@yourdash/csi/useResource";
 import tun from "@yourdash/tunnel/src/index.js";
 import UKButton from "@yourdash/uikit/src/components/button/UKButton.js";
 import UKContainer from "@yourdash/uikit/src/components/container/UKContainer.js";
@@ -19,6 +18,7 @@ import ApplicationPanelContext from "@yourdash/web/src/app/panel/ApplicationPane
 import React, { useEffect, useState } from "react";
 import styles from "./dashApplication.module.scss";
 import { z } from "zod";
+import useResource from "@yourdash/tunnel/src/useResource";
 
 const DashApplication: React.FC = () => {
   const applicationPanelContext = React.useContext(ApplicationPanelContext);
@@ -86,8 +86,10 @@ const DashApplication: React.FC = () => {
           }),
         }),
       ),
-    [],
-  )?.data;
+    {
+      return: "data",
+    },
+  );
   const [isWidgetEditMode, setIsWidgetEditMode] = useState(false);
 
   useEffect(() => {
@@ -204,7 +206,7 @@ const DashApplication: React.FC = () => {
                   level={4}
                 />
                 <UKTextInput
-                  getValue={() => { }}
+                  getValue={() => {}}
                   placeholder={"Inter"}
                   accessibleName={"Header font family"}
                 />

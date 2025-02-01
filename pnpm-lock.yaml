@@ -387,21 +387,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      concurrently:
-        specifier: ^8.2.2
-        version: 8.2.2
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       es-abstract:
         specifier: ^1.22.1
         version: 1.23.9
-      eslint:
-        specifier: ^8.47.0
-        version: 8.57.1
-      express:
-        specifier: ^4.18.2
-        version: 4.19.2
       minimist:
         specifier: ^1.2.8
         version: 1.2.8
@@ -453,18 +441,6 @@ importers:
       vite-plugin-dynamic-import:
         specifier: ^1.5.0
         version: 1.6.0
-      web-tree-sitter:
-        specifier: ^0.20.8
-        version: 0.20.8
-      xml2js:
-        specifier: ^0.6.2
-        version: 0.6.2
-
-  packages/csi:
-    dependencies:
-      socket.io-client:
-        specifier: ^4.7.4
-        version: 4.8.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
 
   packages/opengfx-engine:
     dependencies:
@@ -505,6 +481,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.5(@types/react@18.3.18)
+      path-browserify:
+        specifier: ^1.0.1
+        version: 1.0.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -625,9 +604,9 @@ importers:
       '@yourdash/backend':
         specifier: workspace:*
         version: link:../backend
-      '@yourdash/csi':
+      '@yourdash/chiplet':
         specifier: workspace:*
-        version: link:../csi
+        version: link:../chiplet
       '@yourdash/shared':
         specifier: workspace:*
         version: link:../shared

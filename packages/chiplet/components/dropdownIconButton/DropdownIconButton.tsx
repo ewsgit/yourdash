@@ -6,7 +6,7 @@
 import React, { useContext, useState } from "react";
 import IconButton from "../iconButton/IconButton";
 import RightClickMenuContext from "../rightClickMenu/RightClickMenuContext";
-import { UKIcon } from "../icon/iconDictionary";
+import { ChipletIcon } from "../icon/iconDictionary";
 
 export interface IDropdownIconButton {
   items: {
@@ -15,7 +15,7 @@ export interface IDropdownIconButton {
     onClick: () => void;
   }[];
   className?: string;
-  icon: UKIcon;
+  icon: ChipletIcon;
 }
 
 const DropdownIconButton: React.FC<IDropdownIconButton> = ({ items, className, icon }) => {

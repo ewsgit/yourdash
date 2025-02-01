@@ -3,10 +3,9 @@
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
-import coreCSI from "@yourdash/csi/coreCSI.ts";
-import toAuthImgUrl from "@yourdash/csi/toAuthImgUrl.ts";
 import EndpointResponseLoginInstanceMetadata from "@yourdash/shared/endpoints/login/instance/metadata.ts";
 import clippy from "@yourdash/shared/web/helpers/clippy.ts";
+import toAuthImgUrl from "@yourdash/tunnel/src/getAuthImage.js";
 import UKButton from "@yourdash/uikit/src/components/button/UKButton.js";
 import UKCard from "@yourdash/uikit/src/components/card/UKCard.js";
 import UKFlex from "@yourdash/uikit/src/components/flex/UKFlex.js";
@@ -20,6 +19,7 @@ import styles from "./index.cards.module.scss";
 import loginUser from "./lib/loginUser.ts";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import tun from "@yourdash/tunnel/src/index.ts";
 
 const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | null }> = (props) => {
   const navigate = useNavigate();
@@ -33,9 +33,9 @@ const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | nul
   });
 
   useEffect(() => {
-    if (coreCSI.getUsername() !== "") {
-      setUsername(coreCSI.getUsername());
-      fetch(`${coreCSI.getInstanceUrl()}/login/user/${coreCSI.getUsername()}`, {
+    if (localStorage.getItem("current_user_username") || "" !== "") {
+      setUsername(localStorage.getItem("current_user_username") || "");
+      fetch(`${tun.baseUrl}/login/user/${localStorage.getItem("current_user_username") || ""}`, {
         mode: "cors",
         headers: {
           "Access-Control-Allow-Origin": "*",
@@ -47,7 +47,7 @@ const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | nul
             setUser({ avatar: "", fullName: { first: "", last: "" }, isValid: false });
           } else {
             setUser({
-              avatar: `/login/user/${coreCSI.getUsername()}/avatar`,
+              avatar: `/login/user/${localStorage.getItem("current_user_username") || ""}/avatar`,
               fullName: resp.name,
               isValid: true,
             });
@@ -60,7 +60,7 @@ const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | nul
   }, []);
 
   useEffect(() => {
-    fetch(`${coreCSI.getInstanceUrl()}/login/user/${username}`, {
+    fetch(`${tun.baseUrl}/login/user/${username}`, {
       mode: "cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
@@ -109,16 +109,16 @@ const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | nul
           accessibleName={"Username"}
           placeholder={"Username"}
           type={"username"}
-          defaultValue={coreCSI.getUsername() || ""}
+          defaultValue={localStorage.getItem("current_user_username") || ""}
           getValue={setUsername}
-          autoComplete={`yourdash-instance-login username instance-${coreCSI.getInstanceUrl()}`}
+          autoComplete={`yourdash-instance-login username instance-${tun.baseUrl}`}
         />
         <UKTextInput
           accessibleName={"Password"}
           placeholder={"Password"}
           type={"password"}
           getValue={setPassword}
-          autoComplete={`yourdash-instance-login password instance-${coreCSI.getInstanceUrl()}`}
+          autoComplete={`yourdash-instance-login password instance-${tun.baseUrl}`}
           onSubmit={() => {
             if (!(username === "" || password === "" || !user.isValid)) {
               loginUser(username, password)
@@ -151,7 +151,7 @@ const IndexCardsPage: FC<{ metadata: EndpointResponseLoginInstanceMetadata | nul
         />
         <UKSubtext
           className={styles.instanceUrl}
-          text={coreCSI.getInstanceUrl()}
+          text={tun.baseUrl}
         />
       </UKCard>
       <UKCard

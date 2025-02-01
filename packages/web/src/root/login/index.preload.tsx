@@ -3,7 +3,6 @@
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
-import coreCSI from "@yourdash/csi/coreCSI.ts";
 import UKButton from "@yourdash/uikit/src/components/button/UKButton.js";
 import UKFlex from "@yourdash/uikit/src/components/flex/UKFlex.js";
 import UKHeading from "@yourdash/uikit/src/components/heading/UKHeading.js";
@@ -21,14 +20,14 @@ const LoginIndexPagePreload: FC = () => {
   const [retryCounter, setRetryCounter] = useState<number>(0);
 
   useEffect(() => {
-    isValidInstance(coreCSI.getInstanceUrl()).then((isValid) => {
+    isValidInstance(localStorage.getItem("instance_url") || "").then((isValid) => {
       setValidInstance(isValid);
 
       if (!isValid) {
         setValidInstance(false);
       }
 
-      if (coreCSI.getInstanceUrl() === "") {
+      if (localStorage.getItem("instance_url") === "") {
         navigate("/login/instance");
       }
     });

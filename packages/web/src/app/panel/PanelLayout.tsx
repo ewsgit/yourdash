@@ -11,7 +11,6 @@ import { Outlet } from "react-router";
 import Panel from "./Panel.tsx";
 import clippy from "@yourdash/shared/web/helpers/clippy.ts";
 import styles from "./PanelLayout.module.scss";
-import coreCSI from "@yourdash/csi/coreCSI.ts";
 import UKIconButton from "@yourdash/uikit/src/components/iconButton/UKIconButton.js";
 
 const PanelLayout: React.FC<{
@@ -28,7 +27,7 @@ const PanelLayout: React.FC<{
     if (window.innerWidth < 768) {
       setPanelSide("bottom");
     } else {
-      setPanelSide(coreCSI.userDB.get("core:panel:side") || "left");
+      setPanelSide("left");
     }
   }, [reloadNumber]);
 
@@ -36,14 +35,14 @@ const PanelLayout: React.FC<{
     if (window.innerWidth < 768) {
       setPanelSide("bottom");
     } else {
-      setPanelSide(coreCSI.userDB.get("core:panel:side") || "left");
+      setPanelSide("left");
     }
 
     window.addEventListener("resize", () => {
       if (window.innerWidth < 768) {
         setPanelSide("bottom");
       } else {
-        setPanelSide(coreCSI.userDB.get("core:panel:side") || "left");
+        setPanelSide("left");
       }
     });
   }, []);

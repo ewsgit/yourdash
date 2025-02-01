@@ -28,7 +28,6 @@ import LoginSuccessPage from "./root/login/success/index.tsx";
 import NotFoundPage from "./root/notFound/notFound.tsx";
 import ProjectsIndexPage from "./root/projects/Index.tsx";
 import LinkerDesktopClientStartupPage from "./root/linkerDesktopClientStartup/Index.tsx";
-import HostedApplicationRouter from "./app/HostedApplicationRouter.tsx";
 import WebsocketToasts from "./WebsocketToasts.tsx";
 
 const AppRouter = loadable(() => import("./app/AppRouter.tsx"));
@@ -146,10 +145,6 @@ ReactDOM.createRoot(element).render(
                       <AppRouter />
                     </>
                   }
-                />
-                <Route
-                  path={"h/*"}
-                  element={<HostedApplicationRouter />}
                 />
               </Route>
             </Route>
