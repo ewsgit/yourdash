@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "type": "module",
+  "private": true,
   "engines": {
     "node": ">=21.0.0"
   },
@@ -23,11 +24,7 @@
     "animate.css": "^4.1.1",
     "autoprefixer": "^10.4.15",
     "clsx": "^2.0.0",
-    "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
     "es-abstract": "^1.22.1",
-    "eslint": "^8.47.0",
-    "express": "^4.18.2",
     "minimist": "^1.2.8",
     "node-fetch": "2.x",
     "path": "^0.12.7",
@@ -44,9 +41,6 @@
     "type-fest": "^4.14.0",
     "typescript": "^5.0.4",
     "vite": "^4.4.9",
-    "vite-plugin-dynamic-import": "^1.5.0",
-    "web-tree-sitter": "^0.20.8",
-    "xml2js": "^0.6.2",
-    "yarn": "^1.22.19"
+    "vite-plugin-dynamic-import": "^1.5.0"
   }
 }

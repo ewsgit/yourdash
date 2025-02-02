@@ -20,9 +20,7 @@
     "strict": true
   },
   "include": [
-    "./src/**/*.ts",
-    "../../packages/shared/**/*.ts",
-    "../../applications/**/backend/**/*.ts"
+    "resrc"
   ],
   "exclude": [
     "node_modules"

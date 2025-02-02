@@ -23,9 +23,10 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "./**/*",
-    "../applications/**/frontend/**/*",
-    "../shared/**/*"
+    "views",
+    "components",
+    "../applications/**/frontend/",
+    "../shared/"
   ],
   "references": [
     {

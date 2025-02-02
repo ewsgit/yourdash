@@ -13,3 +13,10 @@
 /.idea/csv-editor.xml
 /.idea/csv-plugin.xml
 /packages/backend/.env
+/packages/uikit/dist/
+
+.nx/cache
+.nx/workspace-data
+.idea/dataSources
+.idea/dataSources.local.xml
+.idea/dataSources.xml

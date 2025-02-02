@@ -1,16 +1,19 @@
 /*
- * Copyright ©2024 Ewsgit<https://github.com/ewsgit> and YourDash<https://github.com/yourdash> contributors.
+ * Copyright ©2025 Ewsgit<https://github.com/ewsgit> and YourDash<https://github.com/yourdash> contributors.
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
-import DropdownIconButton from "@yourdash/chiplet/components/dropdownIconButton/DropdownIconButton.tsx";
-import { UKIcon } from "@yourdash/chiplet/components/icon/iconDictionary.ts";
-import RightClickMenu from "@yourdash/chiplet/components/rightClickMenu/RightClickMenu.tsx";
+import { ChipletIcon } from "@yourdash/chiplet/components/icon/iconDictionary.js";
+import toAuthImgUrl from "@yourdash/tunnel/src/getAuthImage.js";
+import UKContextMenu from "@yourdash/uikit/src/components/contextMenu/UKContextMenu.js";
 import React from "react";
 import IPanelApplicationsLauncherFrontendModule from "@yourdash/shared/core/panel/applicationsLauncher/application.ts";
-import coreCSI from "@yourdash/csi/coreCSI.ts";
 import styles from "./ApplicationList.module.scss";
 import { useNavigate } from "react-router";
+import UKCard from "@yourdash/uikit/src/components/card/UKCard.js";
+import tun from "@yourdash/tunnel/src";
+import { z } from "zod";
+import DropdownIconButton from "@yourdash/chiplet/components/dropdownIconButton/dropdownIconButton.tsx";
 
 const ApplicationList: React.FC<{ applications: IPanelApplicationsLauncherFrontendModule[] }> = ({ applications }) => {
   const navigate = useNavigate();
@@ -19,12 +22,17 @@ const ApplicationList: React.FC<{ applications: IPanelApplicationsLauncherFronte
     <section className={styles.grid}>
       {applications.map((application) => {
         return (
-          <RightClickMenu
+          <UKContextMenu
             items={[
               {
                 label: "Pin To Panel",
                 async onClick() {
-                  await coreCSI.postJson("/core/panel/quick-shortcuts/create", { id: application.id, moduleType: application.type });
+                  await tun.post(
+                    "/core/panel/quick-shortcuts/create",
+                    { id: application.id, moduleType: application.type },
+                    "json",
+                    z.object({}),
+                  );
                   // @ts-ignore
                   window.__yourdashCorePanelQuickShortcutsReload?.();
                   return 0;
@@ -40,15 +48,24 @@ const ApplicationList: React.FC<{ applications: IPanelApplicationsLauncherFronte
             ]}
             className={styles.item}
             key={application.id}
-            onClick={() => {
-              navigate(application.url);
-            }}
           >
-            <div className={styles.itemContent}>
+            <UKCard
+              className={styles.itemContent}
+              onClick={() => {
+                switch (application.type) {
+                  case "frontend":
+                    navigate(application.endpoint!);
+                    break;
+                  case "externalFrontend":
+                    window.location.href = application.url!;
+                    break;
+                }
+              }}
+            >
               <img
                 loading={"lazy"}
                 className={styles.itemIcon}
-                src={`${coreCSI.getInstanceUrl()}${application.icon}`}
+                src={toAuthImgUrl(application.icon)}
                 draggable={false}
                 alt=""
               />
@@ -59,7 +76,12 @@ const ApplicationList: React.FC<{ applications: IPanelApplicationsLauncherFronte
                   {
                     label: "Pin To Panel",
                     async onClick() {
-                      await coreCSI.postJson("/core/panel/quick-shortcuts/create", { id: application.id, moduleType: application.type });
+                      await tun.post(
+                        "/core/panel/quick-shortcuts/create",
+                        { id: application.id, moduleType: application.type },
+                        "json",
+                        z.object({}),
+                      );
                       // @ts-ignore
                       window.__yourdashCorePanelQuickShortcutsReload?.();
                       return 0;
@@ -73,10 +95,10 @@ const ApplicationList: React.FC<{ applications: IPanelApplicationsLauncherFronte
                     },
                   },
                 ]}
-                icon={UKIcon.ThreeBars}
+                icon={ChipletIcon.ThreeBars}
               />
-            </div>
-          </RightClickMenu>
+            </UKCard>
+          </UKContextMenu>
         );
       })}
     </section>
