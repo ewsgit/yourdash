@@ -3,8 +3,8 @@
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
-import toAuthImgUrl from "@yourdash/csi/toAuthImgUrl.ts";
-import useResource from "@yourdash/csi/useResource.ts";
+import toAuthImgUrl from "@yourdash/tunnel/src/getAuthImage.js";
+import useResource from "@yourdash/tunnel/src/useResource.ts";
 import clippy from "@yourdash/shared/web/helpers/clippy.ts";
 import tun from "@yourdash/tunnel/src/index.js";
 import UKImage from "@yourdash/uikit/src/components/image/UKImage.js";
@@ -26,7 +26,7 @@ const QuickShortcuts: React.FC<{ side: "top" | "right" | "bottom" | "left" }> = 
         "json",
         z.object({ displayName: z.string(), id: z.string(), endpoint: z.string().optional(), url: z.string().optional() }).array(),
       ),
-    [num],
+    { dependencies: [num], return: "data" },
   );
 
   // @ts-ignore
@@ -36,7 +36,7 @@ const QuickShortcuts: React.FC<{ side: "top" | "right" | "bottom" | "left" }> = 
 
   return (
     <>
-      {quickShortcutApplications?.data.map((application) => {
+      {quickShortcutApplications?.map((application) => {
         if (!application) return <>Invalid Module</>;
 
         return (

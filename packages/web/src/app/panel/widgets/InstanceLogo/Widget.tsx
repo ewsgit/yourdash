@@ -3,10 +3,10 @@
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
+import tun from "@yourdash/tunnel/src/index.js";
 import { useNavigate } from "react-router";
-import coreCSI from "@yourdash/csi/coreCSI.ts";
 import styles from "./Widget.module.scss";
-import { memo, useEffect, useState } from "react";
+import React, { memo } from "react";
 
 const InstanceLogoWidget: React.FC<{ panelSize: "small" | "medium" | "large" }> = ({ panelSize }) => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const InstanceLogoWidget: React.FC<{ panelSize: "small" | "medium" | "large" }> 
 
   return (
     <img
-      src={`${coreCSI.getInstanceUrl()}${INSTANCE_PANEL_LOGOS[panelSize]}`}
+      src={`${tun.baseUrl}${INSTANCE_PANEL_LOGOS[panelSize]}`}
       alt={"Instance logo"}
       draggable={false}
       className={styles.icon}

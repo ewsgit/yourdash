@@ -1,9 +1,9 @@
 {
   "name": "@yourdash/shared",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "type": "module",
-  "private": true,
+  "private": false,
   "author": "Ewsgit <ewsgit@duck.com>",
   "engines": {
     "node": ">=21.0.0"

@@ -94,7 +94,7 @@ class RequestManager {
     await this.app.register(cors, {
       methods: "*",
       origin: "http://localhost:5173",
-      credentials: true,
+      credentials: true
     });
 
     this.app.register(fastifyCookie, {

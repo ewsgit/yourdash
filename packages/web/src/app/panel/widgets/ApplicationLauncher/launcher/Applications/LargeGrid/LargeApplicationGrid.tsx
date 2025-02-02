@@ -3,13 +3,13 @@
  * YourDash is licensed under the MIT License. (https://ewsgit.mit-license.org)
  */
 
+import toAuthImgUrl from "@yourdash/tunnel/src/getAuthImage.js";
 import tun from "@yourdash/tunnel/src/index.js";
 import UKCard from "@yourdash/uikit/src/components/card/UKCard.js";
 import UKContextMenu from "@yourdash/uikit/src/components/contextMenu/UKContextMenu.js";
 import useToast from "@yourdash/uikit/src/core/toasts/useToast.js";
 import React from "react";
 import IPanelApplicationsLauncherFrontendModule from "@yourdash/shared/core/panel/applicationsLauncher/application.ts";
-import coreCSI from "@yourdash/csi/coreCSI.ts";
 import styles from "./LargeApplicationGrid.module.scss";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -82,7 +82,7 @@ const LargeApplicationGrid: React.FC<{
             >
               <img
                 className={styles.itemIcon}
-                src={`${coreCSI.getInstanceUrl()}/core/panel/applications/app/largeGrid/${module.id}`}
+                src={toAuthImgUrl(`/core/panel/applications/app/largeGrid/${module.id}`)}
                 draggable={false}
                 loading={"lazy"}
                 alt=""
